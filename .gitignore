@@ -1,0 +1,6 @@
+.vs/
+
+/Movie Catalog/bin/**/*.*
+/Movie Catalog/obj/**/*.*
+/Movie Catalog/Resources/Movies
+/Movie Catalog/Resources/Posters
