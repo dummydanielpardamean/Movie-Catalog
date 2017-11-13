@@ -79,6 +79,11 @@
       <DependentUpon>Home.cs</DependentUpon>
     </Compile>
     <Compile Include="ClassSchema\Movie.cs" />
+    <Compile Include="Helper\Storage\Dir.cs" />
+    <Compile Include="Helper\Storage\PosterStorage.cs" />
+    <Compile Include="Helper\Storage\SubtitleStorage.cs" />
+    <Compile Include="Helper\Storage\MovieStorage.cs" />
+    <Compile Include="Helper\Storage\Storage.cs" />
     <Compile Include="JsonSchema\SearchSchema\Search.cs" />
     <Compile Include="JsonSchema\SearchSchema\SearchResult.cs" />
     <Compile Include="Forms\MovieDetail.cs">
@@ -95,7 +100,6 @@
     <Compile Include="Forms\SearchMovie.Designer.cs">
       <DependentUpon>SearchMovie.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\Storage.cs" />
     <Compile Include="User Controls\BrowseMovieItem.cs">
       <SubType>UserControl</SubType>
     </Compile>

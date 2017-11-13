@@ -29,22 +29,24 @@
         private void InitializeComponent()
         {
             this.MovieLabel = new System.Windows.Forms.Label();
-            this.OpenFileMovieButton = new System.Windows.Forms.Button();
+            this.MovieFile = new System.Windows.Forms.Button();
             this.PosterLabel = new System.Windows.Forms.Label();
             this.MoviePathLabel = new System.Windows.Forms.Label();
-            this.PosterPreviewPictureBox = new System.Windows.Forms.PictureBox();
+            this.MoviePoster = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.TitleAddMovieButton = new System.Windows.Forms.TextBox();
+            this.MovieTitle = new System.Windows.Forms.TextBox();
             this.SubtitleLabel = new System.Windows.Forms.Label();
-            this.OpenFileSubtitleButton = new System.Windows.Forms.Button();
+            this.MovieSubtitle = new System.Windows.Forms.Button();
             this.SubtitlePathLabel = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
             this.SearchButton = new System.Windows.Forms.Button();
             this.descriptionLabel = new System.Windows.Forms.Label();
-            this.DescriptionLabelField = new System.Windows.Forms.RichTextBox();
+            this.MovieDescription = new System.Windows.Forms.RichTextBox();
             this.ReleaseYearLabel = new System.Windows.Forms.Label();
-            this.DTPReleaseYear = new System.Windows.Forms.DateTimePicker();
-            ((System.ComponentModel.ISupportInitialize)(this.PosterPreviewPictureBox)).BeginInit();
+            this.MovieReleaseYear = new System.Windows.Forms.DateTimePicker();
+            this.MovieID = new System.Windows.Forms.TextBox();
+            this.IDLabel = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.MoviePoster)).BeginInit();
             this.SuspendLayout();
             // 
             // MovieLabel
@@ -58,15 +60,15 @@
             this.MovieLabel.Text = "Movie";
             this.MovieLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // OpenFileMovieButton
+            // MovieFile
             // 
-            this.OpenFileMovieButton.Location = new System.Drawing.Point(112, 41);
-            this.OpenFileMovieButton.Name = "OpenFileMovieButton";
-            this.OpenFileMovieButton.Size = new System.Drawing.Size(75, 23);
-            this.OpenFileMovieButton.TabIndex = 1;
-            this.OpenFileMovieButton.Text = "Choose file";
-            this.OpenFileMovieButton.UseVisualStyleBackColor = true;
-            this.OpenFileMovieButton.Click += new System.EventHandler(this.OpenFileButton_Click);
+            this.MovieFile.Location = new System.Drawing.Point(112, 41);
+            this.MovieFile.Name = "MovieFile";
+            this.MovieFile.Size = new System.Drawing.Size(75, 23);
+            this.MovieFile.TabIndex = 1;
+            this.MovieFile.Text = "Choose file";
+            this.MovieFile.UseVisualStyleBackColor = true;
+            this.MovieFile.Click += new System.EventHandler(this.MovieFile_Click);
             // 
             // PosterLabel
             // 
@@ -89,17 +91,17 @@
             this.MoviePathLabel.TabIndex = 4;
             this.MoviePathLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // PosterPreviewPictureBox
+            // MoviePoster
             // 
-            this.PosterPreviewPictureBox.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.PosterPreviewPictureBox.Image = global::Movie_Catalog.Properties.Resources.none_flowers;
-            this.PosterPreviewPictureBox.Location = new System.Drawing.Point(113, 80);
-            this.PosterPreviewPictureBox.Name = "PosterPreviewPictureBox";
-            this.PosterPreviewPictureBox.Size = new System.Drawing.Size(139, 189);
-            this.PosterPreviewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PosterPreviewPictureBox.TabIndex = 5;
-            this.PosterPreviewPictureBox.TabStop = false;
-            this.PosterPreviewPictureBox.Click += new System.EventHandler(this.PosterPreviewPictureBox_Click);
+            this.MoviePoster.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.MoviePoster.Image = global::Movie_Catalog.Properties.Resources.none_flowers;
+            this.MoviePoster.Location = new System.Drawing.Point(113, 80);
+            this.MoviePoster.Name = "MoviePoster";
+            this.MoviePoster.Size = new System.Drawing.Size(139, 189);
+            this.MoviePoster.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.MoviePoster.TabIndex = 5;
+            this.MoviePoster.TabStop = false;
+            this.MoviePoster.Click += new System.EventHandler(this.MoviePoster_Click);
             // 
             // label1
             // 
@@ -112,12 +114,12 @@
             this.label1.Text = "Title";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // TitleAddMovieButton
+            // MovieTitle
             // 
-            this.TitleAddMovieButton.Location = new System.Drawing.Point(113, 9);
-            this.TitleAddMovieButton.Name = "TitleAddMovieButton";
-            this.TitleAddMovieButton.Size = new System.Drawing.Size(273, 20);
-            this.TitleAddMovieButton.TabIndex = 7;
+            this.MovieTitle.Location = new System.Drawing.Point(113, 9);
+            this.MovieTitle.Name = "MovieTitle";
+            this.MovieTitle.Size = new System.Drawing.Size(273, 20);
+            this.MovieTitle.TabIndex = 7;
             // 
             // SubtitleLabel
             // 
@@ -130,15 +132,15 @@
             this.SubtitleLabel.Text = "Subtitle(s)";
             this.SubtitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // OpenFileSubtitleButton
+            // MovieSubtitle
             // 
-            this.OpenFileSubtitleButton.Location = new System.Drawing.Point(113, 490);
-            this.OpenFileSubtitleButton.Name = "OpenFileSubtitleButton";
-            this.OpenFileSubtitleButton.Size = new System.Drawing.Size(75, 23);
-            this.OpenFileSubtitleButton.TabIndex = 9;
-            this.OpenFileSubtitleButton.Text = "Choose file";
-            this.OpenFileSubtitleButton.UseVisualStyleBackColor = true;
-            this.OpenFileSubtitleButton.Click += new System.EventHandler(this.OpenFileSubtitleButton_Click);
+            this.MovieSubtitle.Location = new System.Drawing.Point(113, 490);
+            this.MovieSubtitle.Name = "MovieSubtitle";
+            this.MovieSubtitle.Size = new System.Drawing.Size(75, 23);
+            this.MovieSubtitle.TabIndex = 9;
+            this.MovieSubtitle.Text = "Choose file";
+            this.MovieSubtitle.UseVisualStyleBackColor = true;
+            this.MovieSubtitle.Click += new System.EventHandler(this.MovieSubtitle_Click);
             // 
             // SubtitlePathLabel
             // 
@@ -181,13 +183,13 @@
             this.descriptionLabel.Text = "Description";
             this.descriptionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // DescriptionLabelField
+            // MovieDescription
             // 
-            this.DescriptionLabelField.Location = new System.Drawing.Point(113, 365);
-            this.DescriptionLabelField.Name = "DescriptionLabelField";
-            this.DescriptionLabelField.Size = new System.Drawing.Size(387, 119);
-            this.DescriptionLabelField.TabIndex = 15;
-            this.DescriptionLabelField.Text = "";
+            this.MovieDescription.Location = new System.Drawing.Point(113, 365);
+            this.MovieDescription.Name = "MovieDescription";
+            this.MovieDescription.Size = new System.Drawing.Size(387, 119);
+            this.MovieDescription.TabIndex = 15;
+            this.MovieDescription.Text = "";
             // 
             // ReleaseYearLabel
             // 
@@ -200,41 +202,61 @@
             this.ReleaseYearLabel.Text = "Release year";
             this.ReleaseYearLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // DTPReleaseYear
+            // MovieReleaseYear
             // 
-            this.DTPReleaseYear.CustomFormat = "dd-MM-yyyy";
-            this.DTPReleaseYear.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.DTPReleaseYear.Location = new System.Drawing.Point(113, 297);
-            this.DTPReleaseYear.Name = "DTPReleaseYear";
-            this.DTPReleaseYear.Size = new System.Drawing.Size(200, 20);
-            this.DTPReleaseYear.TabIndex = 17;
-            this.DTPReleaseYear.Value = new System.DateTime(2017, 11, 6, 2, 4, 0, 0);
+            this.MovieReleaseYear.CustomFormat = "dd-MM-yyyy";
+            this.MovieReleaseYear.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.MovieReleaseYear.Location = new System.Drawing.Point(113, 297);
+            this.MovieReleaseYear.Name = "MovieReleaseYear";
+            this.MovieReleaseYear.Size = new System.Drawing.Size(200, 20);
+            this.MovieReleaseYear.TabIndex = 17;
+            this.MovieReleaseYear.Value = new System.DateTime(2017, 11, 6, 2, 4, 0, 0);
+            // 
+            // MovieID
+            // 
+            this.MovieID.Location = new System.Drawing.Point(721, 9);
+            this.MovieID.Name = "MovieID";
+            this.MovieID.Size = new System.Drawing.Size(61, 20);
+            this.MovieID.TabIndex = 18;
+            // 
+            // IDLabel
+            // 
+            this.IDLabel.AutoSize = true;
+            this.IDLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IDLabel.Location = new System.Drawing.Point(694, 10);
+            this.IDLabel.Name = "IDLabel";
+            this.IDLabel.Size = new System.Drawing.Size(21, 17);
+            this.IDLabel.TabIndex = 19;
+            this.IDLabel.Text = "ID";
+            this.IDLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // AddMovie
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(794, 576);
-            this.Controls.Add(this.DTPReleaseYear);
+            this.Controls.Add(this.IDLabel);
+            this.Controls.Add(this.MovieID);
+            this.Controls.Add(this.MovieReleaseYear);
             this.Controls.Add(this.ReleaseYearLabel);
-            this.Controls.Add(this.DescriptionLabelField);
+            this.Controls.Add(this.MovieDescription);
             this.Controls.Add(this.descriptionLabel);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.SubtitlePathLabel);
-            this.Controls.Add(this.OpenFileSubtitleButton);
+            this.Controls.Add(this.MovieSubtitle);
             this.Controls.Add(this.SubtitleLabel);
-            this.Controls.Add(this.TitleAddMovieButton);
+            this.Controls.Add(this.MovieTitle);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.PosterPreviewPictureBox);
+            this.Controls.Add(this.MoviePoster);
             this.Controls.Add(this.MoviePathLabel);
             this.Controls.Add(this.PosterLabel);
-            this.Controls.Add(this.OpenFileMovieButton);
+            this.Controls.Add(this.MovieFile);
             this.Controls.Add(this.MovieLabel);
             this.Name = "AddMovie";
             this.RightToLeftLayout = true;
             this.Text = "AddMovie";
-            ((System.ComponentModel.ISupportInitialize)(this.PosterPreviewPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MoviePoster)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,20 +265,22 @@
         #endregion
 
         private System.Windows.Forms.Label MovieLabel;
-        private System.Windows.Forms.Button OpenFileMovieButton;
+        private System.Windows.Forms.Button MovieFile;
         private System.Windows.Forms.Label PosterLabel;
         private System.Windows.Forms.Label MoviePathLabel;
-        private System.Windows.Forms.PictureBox PosterPreviewPictureBox;
+        private System.Windows.Forms.PictureBox MoviePoster;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox TitleAddMovieButton;
+        private System.Windows.Forms.TextBox MovieTitle;
         private System.Windows.Forms.Label SubtitleLabel;
-        private System.Windows.Forms.Button OpenFileSubtitleButton;
+        private System.Windows.Forms.Button MovieSubtitle;
         private System.Windows.Forms.Label SubtitlePathLabel;
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.Button SearchButton;
         private System.Windows.Forms.Label descriptionLabel;
-        private System.Windows.Forms.RichTextBox DescriptionLabelField;
+        private System.Windows.Forms.RichTextBox MovieDescription;
         private System.Windows.Forms.Label ReleaseYearLabel;
-        private System.Windows.Forms.DateTimePicker DTPReleaseYear;
+        private System.Windows.Forms.DateTimePicker MovieReleaseYear;
+        private System.Windows.Forms.TextBox MovieID;
+        private System.Windows.Forms.Label IDLabel;
     }
 }

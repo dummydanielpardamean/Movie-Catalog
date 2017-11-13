@@ -1,4 +1,5 @@
-﻿using Movie_Catalog.Interfaces;
+﻿using Movie_Catalog.Helper.Storage;
+using Movie_Catalog.Interfaces;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -22,8 +23,9 @@ namespace Movie_Catalog.User_Controls
 
         private void setMoviePoster(Movie movie)
         {
-            Storage storage = new Storage();
-            MoviePoster.Image = Image.FromFile(@storage.GetPoster(movie));
+            MoviePoster.Image = Image.FromFile(
+                    PosterStorage.GetFile(movie.PosterPath)
+                );
         }
 
         private void setMovieTitle(Movie movie)

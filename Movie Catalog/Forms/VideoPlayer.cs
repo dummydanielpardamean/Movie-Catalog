@@ -1,4 +1,5 @@
 ﻿using Movie_Catalog.ClassSchema;
+using Movie_Catalog.Helper.Storage;
 using Movie_Catalog.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -26,10 +27,10 @@ namespace Movie_Catalog
 
             if (movie.MoviePath != null)
             {
-                Storage storage = new Storage();
-                string moviePath = storage.GetMovie(movie.MoviePath);
+                string uri = new Uri(
+                        MovieStorage.GetFile(movie.MoviePath)
+                    ).AbsoluteUri;
 
-                string uri = new Uri(@moviePath).AbsoluteUri;
                 axVLCPlugin21.playlist.add(uri);
                 axVLCPlugin21.playlist.play();
 

@@ -1,4 +1,5 @@
-﻿using Movie_Catalog.Interfaces;
+﻿using Movie_Catalog.Helper.Storage;
+using Movie_Catalog.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,10 +26,10 @@ namespace Movie_Catalog.User_Controls
 
         private void setMoviePoster(Movie movie)
         {
-            Storage storage = new Storage();
-
             // ambil gambar lokal dan pasangkan ke picturebox
-            MoviePoster.Image = Image.FromFile(@storage.GetPoster(movie));
+            MoviePoster.Image = Image.FromFile(
+                    PosterStorage.GetFile(movie.PosterPath)
+                );
         }
 
         private void setMovieTitle(Movie movie)
