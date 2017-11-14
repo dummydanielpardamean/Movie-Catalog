@@ -63,22 +63,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassSchema\LastWatched.cs" />
-    <Compile Include="ClassSchema\MoviePlus.cs" />
     <Compile Include="Forms\AddMovie.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\AddMovie.Designer.cs">
       <DependentUpon>AddMovie.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\DBConnector.cs" />
+    <Compile Include="Helper\SqlConnector.cs" />
     <Compile Include="Forms\Home.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Home.Designer.cs">
       <DependentUpon>Home.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClassSchema\Movie.cs" />
     <Compile Include="Helper\Storage\Dir.cs" />
     <Compile Include="Helper\Storage\PosterStorage.cs" />
     <Compile Include="Helper\Storage\SubtitleStorage.cs" />

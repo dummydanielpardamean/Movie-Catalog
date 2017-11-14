@@ -10,10 +10,15 @@ namespace Movie_Catalog.Helper.Storage
 
         private String FilePath, UniqueName;
 
+        public SubtitleStorage(String filePath)
+        {
+            FilePath = Path.Combine(DestPath, filePath);
+        }
+
         public SubtitleStorage(String UniqueName, String FilePath)
         {
             Dir.CreateIfDirectoryNotExist(DestPath);
-
+            
             this.FilePath = FilePath;
             this.UniqueName = UniqueName;
         }
@@ -29,12 +34,14 @@ namespace Movie_Catalog.Helper.Storage
                 );
         }
 
+        public void Delete()
+        {
+            base.Delete(FilePath);
+        }
+
         public string GetName()
         {
-            return String.Format("{0}.{1}",
-                    this.UniqueName,
-                    Path.GetExtension(this.FilePath)
-                );
+            return String.Format("{0}{1}", UniqueName, Path.GetExtension(FilePath));
         }
     }
 }

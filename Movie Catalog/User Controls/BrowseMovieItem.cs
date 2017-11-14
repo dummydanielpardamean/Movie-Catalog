@@ -1,5 +1,5 @@
 ﻿using Movie_Catalog.Helper.Storage;
-using Movie_Catalog.Interfaces;
+using MySql.Data.MySqlClient;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -10,7 +10,7 @@ namespace Movie_Catalog.User_Controls
     {
         public static string ClickedMovieID;
 
-        public BrowseMovieItem(Movie movie)
+        public BrowseMovieItem(MySqlDataReader movie)
         {
             InitializeComponent();
 
@@ -21,21 +21,21 @@ namespace Movie_Catalog.User_Controls
             setOpenButtonAttr(movie);
         }
 
-        private void setMoviePoster(Movie movie)
+        private void setMoviePoster(MySqlDataReader movie)
         {
             MoviePoster.Image = Image.FromFile(
-                    PosterStorage.GetFile(movie.PosterPath)
+                    PosterStorage.GetFile(movie["poster_path"].ToString())
                 );
         }
 
-        private void setMovieTitle(Movie movie)
+        private void setMovieTitle(MySqlDataReader movie)
         {
-            MovieTitle.Text = String.Format("{0} ({1:yyyy})", movie.Title, DateTime.Parse(movie.ReleaseYear));
+            MovieTitle.Text = String.Format("{0} ({1:yyyy})", movie["title"].ToString(), DateTime.Parse(movie["release_year"].ToString()));
         }
 
-        private void setOpenButtonAttr(Movie movie)
+        private void setOpenButtonAttr(MySqlDataReader movie)
         {
-            OpenButton.Name = movie.ID;
+            OpenButton.Name = movie["id"].ToString();
             OpenButton.Click += new System.EventHandler(this.OpenButton_Click);
         }
 

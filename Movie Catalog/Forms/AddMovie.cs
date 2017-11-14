@@ -1,4 +1,5 @@
 ﻿using Movie_Catalog.Helper.Storage;
+using MySql.Data.MySqlClient;
 using System;
 using System.Drawing;
 using System.IO;
@@ -44,8 +45,6 @@ namespace Movie_Catalog
             fetchPosterThread.Start();
         }
 
-        
-
         private void InitializeSearchMovieForm()
         {
             this.SM = new SearchMovie();
@@ -54,11 +53,9 @@ namespace Movie_Catalog
             SM.ShowDialog();
         }
 
-
-
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            ValidateInputs();
+            //ValidateInputs();
 
             SaveButton.Text = "SAVING...";
 
@@ -68,26 +65,54 @@ namespace Movie_Catalog
 
             DBConnector DBC = new DBConnector();
 
-            string query = String.Format("INSERT INTO movies (title, description, release_year, poster_path, movie_path, id) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');",
-                MovieTitle.Text,
-                MovieDescription.Text,
-                MovieReleaseYear.Value.ToString("yyyy-MM-dd"),
-                posterStorage.GetName(),
-                movieStorage.GetName(),
-                MovieID.Text
-            );
+            string query = "INSERT INTO movies (id, title, description, release_year, poster_path, movie_path, subtitle_path) VALUES (@id, @title, @description, @release_year, @poster_path, @movie_path, @subtitle_path)";
 
-            if (DBC.Insert(query))
+            MySqlCommand command = new MySqlCommand(query, DBC.connection);
+            command.Parameters.Add("@id", MySqlDbType.Int64);
+            command.Parameters.Add("@title", MySqlDbType.String);
+            command.Parameters.Add("@description", MySqlDbType.String);
+            command.Parameters.Add("@release_year", MySqlDbType.Date);
+            command.Parameters.Add("@poster_path", MySqlDbType.String);
+            command.Parameters.Add("@movie_path", MySqlDbType.String);
+            command.Parameters.Add("@subtitle_path", MySqlDbType.String);
+
+            command.Parameters["@id"].Value = MovieID.Text;
+            command.Parameters["@title"].Value = MovieTitle.Text;
+            command.Parameters["@description"].Value = MovieDescription.Text;
+            command.Parameters["@release_year"].Value = MovieReleaseYear.Value.ToString("yyyy-MM-dd");
+            command.Parameters["@poster_path"].Value = posterStorage.GetName();
+            command.Parameters["@movie_path"].Value = movieStorage.GetName();
+            command.Parameters["@subtitle_path"].Value = subtitleStorage.GetName();
+
+
+            try
             {
-                movieStorage.Run();
-                posterStorage.Run();
-                subtitleStorage.Run();
+                DBC.connection.Open();
+                
+                if(command.ExecuteNonQuery() != -1)
+                {
+                    movieStorage.Run();
+                    posterStorage.Run();
+                    subtitleStorage.Run();
 
-                SaveButton.Text = "SAVE";
+                    SaveButton.Text = "SAVE";
 
-                MessageBox.Show("Berhasil disimpan.");
+                    MessageBox.Show("Berhasil disimpan.");
 
-                this.Close();
+                    this.Close();
+                }
+                else
+                {
+                    SaveButton.Text = "SAVE";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿using Movie_Catalog.Helper.Storage;
-using Movie_Catalog.Interfaces;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,7 +9,7 @@ namespace Movie_Catalog.User_Controls
 {
     partial class LastWatchedItem : UserControl
     {
-        public LastWatchedItem(Movie movie)
+        public LastWatchedItem(MySqlDataReader movie)
         {
             InitializeComponent();
 
@@ -24,39 +24,39 @@ namespace Movie_Catalog.User_Controls
             setPlayButtonAttr(movie);
         }
 
-        private void setMoviePoster(Movie movie)
+        private void setMoviePoster(MySqlDataReader movie)
         {
             // ambil gambar lokal dan pasangkan ke picturebox
             MoviePoster.Image = Image.FromFile(
-                    PosterStorage.GetFile(movie.PosterPath)
+                    PosterStorage.GetFile(movie["poster_path"].ToString())
                 );
         }
 
-        private void setMovieTitle(Movie movie)
+        private void setMovieTitle(MySqlDataReader movie)
         {
             // melakukan sedikit format teks, yang bertujuan untuk menggabungkan title dengan tahun film dikeluarkan
-            DateTime dt = DateTime.Parse(movie.ReleaseYear);
-            string titleFormat = String.Format("{0} ({1:yyyy})", movie.Title, dt);
+            DateTime dt = DateTime.Parse(movie["release_year"].ToString());
+            string titleFormat = String.Format("{0} ({1:yyyy})", movie["title"].ToString(), dt);
             // set title sesuai dengan format
             MovieTitle.Text = titleFormat;
         }
 
-        private void setPosistionInformation(Movie movie)
+        private void setPosistionInformation(MySqlDataReader movie)
         {
-            double currentPositionHour = Math.Floor(((movie.CurrentPosition / (1000 * 60 * 60)) % 24));
-            double currentPositionMinute = Math.Floor((movie.CurrentPosition / 1000) % 60);
-            double currentPositionSecond = Math.Floor(((movie.CurrentPosition / (1000 * 60)) % 60));
+            double currentPositionHour = Math.Floor(((Convert.ToDouble(movie["current_position"].ToString()) / (1000 * 60 * 60)) % 24));
+            double currentPositionMinute = Math.Floor((Convert.ToDouble(movie["current_position"].ToString()) / 1000) % 60);
+            double currentPositionSecond = Math.Floor(((Convert.ToDouble(movie["current_position"].ToString()) / (1000 * 60)) % 60));
 
-            double MovieDurationHour = Math.Floor(((movie.MovieDuration / (1000 * 60 * 60)) % 24));
-            double movieDurationMinute = Math.Floor((movie.MovieDuration / 1000) % 60);
-            double movieDurationSecond = Math.Floor(((movie.MovieDuration / (1000 * 60)) % 60));
+            double MovieDurationHour = Math.Floor(((Convert.ToDouble(movie["movie_duration"].ToString()) / (1000 * 60 * 60)) % 24));
+            double movieDurationMinute = Math.Floor((Convert.ToDouble(movie["movie_duration"].ToString()) / 1000) % 60);
+            double movieDurationSecond = Math.Floor(((Convert.ToDouble(movie["movie_duration"].ToString()) / (1000 * 60)) % 60));
 
             PositionInformation.Text = String.Format("{0}h{1}m{2}s / {3}h{4}m{5}s", currentPositionHour, currentPositionMinute, currentPositionSecond, MovieDurationHour, movieDurationMinute, movieDurationSecond);
         }
 
-        private void setLastWatchedInformation(Movie movie)
+        private void setLastWatchedInformation(MySqlDataReader movie)
         {
-            DateTime last_watched = DateTime.Parse(movie.LastWatchedDate);
+            DateTime last_watched = DateTime.Parse(movie["last_watched_date"].ToString());
             DateTime currentDate = DateTime.Now;
             TimeSpan timeSpan = (currentDate - last_watched);
 
@@ -90,9 +90,9 @@ namespace Movie_Catalog.User_Controls
             }
         }
 
-        private void setPlayButtonAttr(Movie movie)
+        private void setPlayButtonAttr(MySqlDataReader movie)
         {
-            PlayButton.Name = movie.ID;
+            PlayButton.Name = movie["id"].ToString();
             PlayButton.Click += new System.EventHandler(this.PlayButton_Click);
         }
 
@@ -102,12 +102,43 @@ namespace Movie_Catalog.User_Controls
 
             DBConnector DBC = new DBConnector();
 
-            string query = String.Format("SELECT m.id, m.title, m.description, m.release_year, m.poster_path, m.movie_path, lw.current_position, lw.movie_duration, lw.last_watched_date FROM last_watched as lw, movies as m WHERE m.id=lw.movie_id and m.id='{0}'", button.Name);
+            string query = "SELECT m.id, m.title, m.description, m.release_year, m.poster_path, m.movie_path, lw.current_position, lw.movie_duration, lw.last_watched_date FROM last_watched as lw, movies as m WHERE m.id=lw.movie_id and m.id=@movie_id";
 
-            List<Movie> Movies = DBC.SelectForMoviePlus(query);
+            MySqlCommand command = new MySqlCommand(query, DBC.connection);
+            command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+            command.Parameters["@movie_id"].Value = button.Name;
 
-            VideoPlayer videoPlayer = new VideoPlayer(Movies[0]);
-            videoPlayer.ShowDialog();
+            try
+            {
+                DBC.connection.Open();
+
+                MySqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    Dictionary<string, string> Movie = new Dictionary<string, string>();
+
+                    Movie["id"] = reader["id"].ToString();
+                    Movie["title"] = reader["title"].ToString();
+                    Movie["description"] = reader["description"].ToString();
+                    Movie["release_year"] = reader["release_year"].ToString();
+                    Movie["poster_path"] = reader["poster_path"].ToString();
+                    Movie["movie_path"] = reader["movie_path"].ToString();
+                    Movie["current_position"] = reader["current_position"].ToString();
+                    Movie["movie_duration"] = reader["movie_duration"].ToString();
+                    Movie["last_watched_date"] = reader["last_watched_date"].ToString();
+
+                    VideoPlayer videoPlayer = new VideoPlayer(Movie);
+                    videoPlayer.ShowDialog();
+                }
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
+            }
         }
     }
 }

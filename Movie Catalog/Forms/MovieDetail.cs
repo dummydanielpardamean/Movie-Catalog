@@ -1,6 +1,6 @@
 ﻿using Movie_Catalog.Helper.Storage;
-using Movie_Catalog.Interfaces;
 using Movie_Catalog.User_Controls;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,46 +10,76 @@ namespace Movie_Catalog
 {
     public partial class MovieDetail : Form
     {
-        private Movie Movie;
+        private DBConnector DBC;
+
+        private Dictionary<string, string> Movie;
 
         public MovieDetail()
         {
+            DBC = new DBConnector();
+
             InitializeComponent();
 
             getMovieInformation();
 
-            setMoviePoster();
+            setMoviePoster(Movie);
 
-            setMovieTitle();
+            setMovieTitle(Movie);
 
-            setMovieDescription();
+            setMovieDescription(Movie);
         }
 
         private void getMovieInformation()
         {
-            DBConnector DBC = new DBConnector();
+            try
+            {
+                DBC.connection.Open();
 
-            string query = String.Format("select * from movies where id='{0}'", BrowseMovieItem.ClickedMovieID);
+                string query = "select * from movies where id=@movie_id";
+                MySqlCommand command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
 
-            List<Movie> Movies = DBC.SelectForBrowseMovie(query);
+                MySqlDataReader reader = command.ExecuteReader();
 
-            Movie = Movies[0];
+                Movie = new Dictionary<string, string>();
+
+                if (reader.Read())
+                {
+                    Movie["id"] = reader["id"].ToString();
+                    Movie["title"] = reader["title"].ToString();
+                    Movie["description"] = reader["description"].ToString();
+                    Movie["release_year"] = reader["release_year"].ToString();
+                    Movie["poster_path"] = reader["poster_path"].ToString();
+                    Movie["movie_path"] = reader["movie_path"].ToString();
+                    Movie["subtitle_path"] = reader["subtitle_path"].ToString();
+                    Movie["created_at"] = reader["created_at"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
+            }
         }
 
-        private void setMoviePoster()
+        private void setMoviePoster(Dictionary<string, string> Movie)
         {
-            MoviePoster.Image = Image.FromFile(PosterStorage.GetFile(Movie.PosterPath));
+            MoviePoster.Image = Image.FromFile(PosterStorage.GetFile(Movie["poster_path"].ToString()));
         }
 
-        private void setMovieTitle()
+        private void setMovieTitle(Dictionary<string, string> Movie)
         {
-            DateTime dateTime = DateTime.Parse(Movie.ReleaseYear);
-            MovieTitle.Text = String.Format("{0} ({1:yyyy})", Movie.Title, dateTime);
+            DateTime dateTime = DateTime.Parse(Movie["release_year"].ToString());
+            MovieTitle.Text = String.Format("{0} ({1:yyyy})", Movie["title"].ToString(), dateTime);
         }
 
-        private void setMovieDescription()
+        private void setMovieDescription(Dictionary<string, string> Movie)
         {
-            MovieDescription.Text = Movie.Description;
+            MovieDescription.Text = Movie["description"].ToString();
         }
 
         private void PlayMovieButton_Click(object sender, EventArgs e)
@@ -62,31 +92,72 @@ namespace Movie_Catalog
         {
             if (MessageBox.Show("Hapus film ini?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                DBConnector DBC = new DBConnector();
+                string query = "SELECT m.id, m.title, m.description, m.release_year, m.poster_path, m.movie_path, m.subtitle_path, lw.current_position, lw.movie_duration, lw.last_watched_date FROM last_watched as lw, movies as m WHERE m.id=lw.movie_id and m.id=@movie_id";
 
-                string query = String.Format("DELETE FROM movies WHERE id= '{0}'",
-                        BrowseMovieItem.ClickedMovieID
-                    );
+                MySqlCommand command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
 
-                if (DBC.Delete(query))
+                try
                 {
-                    query = String.Format("DELETE FROM last_watched WHERE movie_id= '{0}'",
-                            BrowseMovieItem.ClickedMovieID
-                        );
+                    DBC.connection.Open();
 
-                    DBC = new DBConnector();
+                    MySqlDataReader reader = command.ExecuteReader();
 
-                    if (DBC.Delete(query))
-                        this.Close();
+                    if (reader.Read())
+                    {
+                        MovieStorage movieStorage = new MovieStorage(reader["movie_path"].ToString());
+                        movieStorage.Delete();
+
+                        PosterStorage posterStorage = new PosterStorage(reader["poster_path"].ToString());
+                        posterStorage.Delete();
+
+                        SubtitleStorage subtitleStorage = new SubtitleStorage(reader["subtitle_path"].ToString());
+                        subtitleStorage.Delete();
+
+                    }
+
+                    DBC.connection.Close();
+
+                    DBC.connection.Open();
+
+                    query = "DELETE FROM movies WHERE id= @movie_id";
+
+                    command = new MySqlCommand(query, DBC.connection);
+                    command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                    command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
+
+                    if (command.ExecuteNonQuery() != -1)
+                    {
+                        DBC.connection.Close();
+
+                        DBC.connection.Open();
+
+                        query = "DELETE FROM last_watched WHERE movie_id= @movie_id";
+
+                        command = new MySqlCommand(query, DBC.connection);
+                        command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                        command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
+
+                        if (command.ExecuteNonQuery() != -1)
+                            this.Close();
+                        else
+                            Console.WriteLine("Film tidak berhasil di hapus");
+                    }
                     else
+                    {
                         Console.WriteLine("Film tidak berhasil di hapus");
-                }
-                else
+                    }
+                }catch(Exception ex)
                 {
-                    Console.WriteLine("Film tidak berhasil di hapus");
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    DBC.connection.Close();
                 }
             }
-            
+
         }
     }
 }

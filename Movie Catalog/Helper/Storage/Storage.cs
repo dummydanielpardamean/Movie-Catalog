@@ -9,7 +9,7 @@ namespace Movie_Catalog.Helper.Storage
     class Storage
     {
         // Thread untuk movie dan subtitle
-        protected void Run(String FilePath, String DestPath)
+        protected void Run(String FilePath, String DestPath, bool delete=false)
         {
             Thread thread = new Thread(
                     new ThreadStart( () =>
@@ -17,6 +17,26 @@ namespace Movie_Catalog.Helper.Storage
                         try
                         {
                             File.Copy(FilePath, DestPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    })
+                );
+
+            thread.Start();
+            thread.Join();
+        }
+
+        protected void Delete(String filePath)
+        {
+            Thread thread = new Thread(
+                    new ThreadStart(() =>
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
                         }
                         catch (Exception ex)
                         {

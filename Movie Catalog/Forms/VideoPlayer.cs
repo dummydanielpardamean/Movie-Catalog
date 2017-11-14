@@ -1,6 +1,5 @@
-﻿using Movie_Catalog.ClassSchema;
-using Movie_Catalog.Helper.Storage;
-using Movie_Catalog.Interfaces;
+﻿using Movie_Catalog.Helper.Storage;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -11,75 +10,89 @@ namespace Movie_Catalog
     {
         private DBConnector DBC;
 
-        private Movie Movie;
+        private string query;
+
+        private MySqlCommand command;
+
+        private Dictionary<string, string> Movie;
 
         private static double CurrentPosition;
 
         private static double MovieDurationLength;
 
-        public VideoPlayer(Movie movie)
+        public VideoPlayer(Dictionary<string, string> movie)
         {
+            InitializeComponent();
+
             DBC = new DBConnector();
 
             Movie = movie;
 
-            InitializeComponent();
+            SetMovieToVideoPlayer();
+        }
 
-            if (movie.MoviePath != null)
+        ~VideoPlayer()
+        {
+            axVLCPlugin21.Dispose();
+        }
+
+        private void SetMovieToVideoPlayer()
+        {
+            if (Movie["movie_path"].ToString() != null)
             {
                 string uri = new Uri(
-                        MovieStorage.GetFile(movie.MoviePath)
+                        MovieStorage.GetFile(Movie["movie_path"].ToString())
                     ).AbsoluteUri;
 
                 axVLCPlugin21.playlist.add(uri);
                 axVLCPlugin21.playlist.play();
 
-                string query = String.Format("SELECT * FROM last_watched WHERE movie_id = '{0}';",
-                    Movie.ID
-                );
-
-                List<LastWatched> result = DBC.SelectForLastWatched(query);
-
-                if (result.Count > 0)
-                    axVLCPlugin21.input.time = Convert.ToDouble(result[0].current_position);
-                else
-                    axVLCPlugin21.input.time = 0;
+                try
+                {
+                    SetPosition();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    DBC.connection.Close();
+                }
             }
         }
 
         private void axVLCPlugin21_MediaPlayerStopped(object sender, EventArgs e)
         {
-            string query;
-
-            // set up query untuk mengecek apa ada record dengan movie_id yang diberikan
-            query = String.Format("SELECT * FROM last_watched WHERE movie_id = '{0}';",
-                    Movie.ID
-                );
-
-            // jika ada record
-            if (DBC.SelectForLastWatched(query).Count > 0)
+            try
             {
-                // perbarui data.
-                query = String.Format("UPDATE last_watched SET current_position = '{1}', movie_duration = '{2}', last_watched_date = '{3}' WHERE movie_id = '{0}';",
-                    Movie.ID,
-                    CurrentPosition,
-                    MovieDurationLength,
-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                );
+                DBC.connection.Open();
 
-                DBC.Update(query);
+                // set up query untuk mengecek apa ada record dengan movie_id yang diberikan
+                query = "SELECT * FROM last_watched WHERE movie_id = @movie_id;";
+                command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+
+                MySqlDataReader reader = command.ExecuteReader();
+
+                // jika ada record
+                if (reader.Read())
+                {
+                    UpdatePosition();
+                }
+                else
+                {
+                    CreateLastWatchedRecord();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // jika tidak, buat record
-                query = String.Format("INSERT INTO last_watched (movie_id, current_position, movie_duration, last_watched_date) VALUES ('{0}', '{1}', '{2}', '{3}');",
-                    Movie.ID,
-                    CurrentPosition,
-                    MovieDurationLength,
-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                );
-
-                DBC.Insert(query);
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
             }
         }
 
@@ -101,13 +114,100 @@ namespace Movie_Catalog
         {
             // jika film sudah diputar sampai habis
             // akan dilakukan penghapusan record history tontonan
-            string query = String.Format("DELETE FROM last_watched WHERE movie_id = '{0}';",
-                    Movie.ID
-                );
+            string query = "DELETE FROM last_watched WHERE movie_id = @movie_id;";
             DBConnector DBC = new DBConnector();
 
-            if(DBC.Delete(query))
+            MySqlCommand command = new MySqlCommand(query, DBC.connection);
+            command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+
+            command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+
+            if (command.ExecuteNonQuery() != -1)
                 this.Close();
+        }
+
+        private void SetPosition()
+        {
+            DBC.connection.Open();
+
+            query = "SELECT * FROM last_watched WHERE movie_id=@movie_id";
+            MySqlCommand command = new MySqlCommand(query, DBC.connection);
+            command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+            command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+
+            MySqlDataReader reader = command.ExecuteReader();
+
+            if (reader.Read())
+                axVLCPlugin21.input.time = Convert.ToDouble(reader["current_position"].ToString());
+            else
+                axVLCPlugin21.input.time = 0;
+        }
+
+        private void UpdatePosition()
+        {
+            DBC.connection.Close();
+
+            try
+            {
+                DBC.connection.Open();
+
+                // perbarui data.
+                query = "UPDATE last_watched SET current_position = @current_position, movie_duration = @movie_duration, last_watched_date = @last_watched_date WHERE movie_id = @movie_id;";
+                command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters.Add("@current_position", MySqlDbType.Int64);
+                command.Parameters.Add("@movie_duration", MySqlDbType.Int64);
+                command.Parameters.Add("@last_watched_date", MySqlDbType.String);
+
+                command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+                command.Parameters["@current_position"].Value = CurrentPosition;
+                command.Parameters["@movie_duration"].Value = MovieDurationLength;
+                command.Parameters["@last_watched_date"].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
+            }
+        }
+
+        private void CreateLastWatchedRecord()
+        {
+            DBC.connection.Close();
+
+            try
+            {
+                DBC.connection.Open();
+
+                // jika tidak, buat record
+                query = "INSERT INTO last_watched (movie_id, current_position, movie_duration, last_watched_date) VALUES (@movie_id, @current_position, @movie_duration, @last_watched_date);";
+
+                command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters.Add("@current_position", MySqlDbType.Int64);
+                command.Parameters.Add("@movie_duration", MySqlDbType.Int64);
+                command.Parameters.Add("@last_watched_date", MySqlDbType.String);
+
+                command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+                command.Parameters["@current_position"].Value = CurrentPosition;
+                command.Parameters["@movie_duration"].Value = MovieDurationLength;
+                command.Parameters["@last_watched_date"].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
+            }
         }
     }
 }

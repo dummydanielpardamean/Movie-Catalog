@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using Movie_Catalog.Interfaces;
 
 namespace Movie_Catalog.User_Controls
 {
@@ -45,13 +37,29 @@ namespace Movie_Catalog.User_Controls
 
             DBConnector DBC = new DBConnector();
 
-            List<Movie> movies = DBC.SelectForBrowseMovie("SELECT * FROM movies");
-
-            foreach (Movie movie in movies)
+            try
             {
-                this.FlowLayoutBrowse.Controls.Add(
-                        new BrowseMovieItem(movie)
-                    );
+                DBC.connection.Open();
+
+                string query = "SELECT * FROM movies";
+
+                MySqlCommand command = new MySqlCommand(query, DBC.connection);
+                MySqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    this.FlowLayoutBrowse.Controls.Add(
+                            new BrowseMovieItem(reader)
+                        );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
             }
         }
     }

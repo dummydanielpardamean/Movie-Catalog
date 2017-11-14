@@ -20,12 +20,22 @@ namespace Movie_Catalog.Helper.Storage
             UniqueName = uniqueName;
         }
 
+        public PosterStorage(String fileName)
+        {
+            FileName = Path.Combine(DestPath, fileName);
+        }
+
         public void Run()
         {
             base.Run(
                     PictureBox, 
                     Path.Combine(DestPath, FileName)
                 );
+        }
+
+        public void Delete()
+        {
+            base.Delete(FileName);
         }
 
         public String GetName()

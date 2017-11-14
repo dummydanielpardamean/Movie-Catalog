@@ -10,6 +10,11 @@ namespace Movie_Catalog.Helper.Storage
 
         private String FilePath, UniqueName;
 
+        public MovieStorage(String filePath)
+        {
+            FilePath = Path.Combine(DestPath, filePath);
+        }
+
         public MovieStorage(String UniqueName, String FilePath)
         {
             Dir.CreateIfDirectoryNotExist(DestPath);
@@ -29,6 +34,11 @@ namespace Movie_Catalog.Helper.Storage
                         )
                     )
                 );
+        }
+
+        public void Delete()
+        {
+            base.Delete(FilePath);
         }
 
         public string GetName()

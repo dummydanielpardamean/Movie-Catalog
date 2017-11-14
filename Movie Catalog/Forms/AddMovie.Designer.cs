@@ -255,7 +255,7 @@
             this.Controls.Add(this.MovieLabel);
             this.Name = "AddMovie";
             this.RightToLeftLayout = true;
-            this.Text = "AddMovie";
+            this.Text = "6";
             ((System.ComponentModel.ISupportInitialize)(this.MoviePoster)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
