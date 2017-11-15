@@ -57,40 +57,6 @@ namespace Movie_Catalog
             }
         }
 
-        private void axVLCPlugin21_MediaPlayerStopped(object sender, EventArgs e)
-        {
-            try
-            {
-                DBC.connection.Open();
-
-                // set up query untuk mengecek apa ada record dengan movie_id yang diberikan
-                query = "SELECT * FROM last_watched WHERE movie_id = @movie_id;";
-                command = new MySqlCommand(query, DBC.connection);
-                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
-                command.Parameters["@movie_id"].Value = Movie["id"].ToString();
-
-                MySqlDataReader reader = command.ExecuteReader();
-
-                // jika ada record
-                if (reader.Read())
-                {
-                    UpdatePosition();
-                }
-                else
-                {
-                    CreateLastWatchedRecord();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                DBC.connection.Close();
-            }
-        }
-
         private void axVLCPlugin21_MediaPlayerPositionChanged(object sender, AxAXVLC.DVLCEvents_MediaPlayerPositionChangedEvent e)
         {
             // Terkadang time mengembalikan nilai -1
@@ -98,6 +64,7 @@ namespace Movie_Catalog
             // jadi dilakukan conditional didalam memperbarui value CurrentPostion
             if (axVLCPlugin21.input.time != -1)
                 CurrentPosition = axVLCPlugin21.input.time;
+            Console.WriteLine(CurrentPosition);
         }
 
         private void axVLCPlugin21_MediaPlayerLengthChanged(object sender, AxAXVLC.DVLCEvents_MediaPlayerLengthChangedEvent e)
@@ -205,9 +172,40 @@ namespace Movie_Catalog
             }
         }
 
-        private void VideoPlayer_FormClosing(object sender, FormClosingEventArgs e)
+        private void axVLCPlugin21_MediaPlayerStopped(object sender, EventArgs e)
         {
-            axVLCPlugin21.Dispose();
+            try
+            {
+                DBC.connection.Open();
+
+                // set up query untuk mengecek apa ada record dengan movie_id yang diberikan
+                query = "SELECT * FROM last_watched WHERE movie_id = @movie_id;";
+                command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                command.Parameters["@movie_id"].Value = Movie["id"].ToString();
+
+                MySqlDataReader reader = command.ExecuteReader();
+
+                // jika ada record
+                if (reader.Read())
+                {
+                    UpdatePosition();
+                }
+                else
+                {
+                    CreateLastWatchedRecord();
+                }
+                axVLCPlugin21.Dispose();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                DBC.connection.Close();
+            }
         }
     }
 }

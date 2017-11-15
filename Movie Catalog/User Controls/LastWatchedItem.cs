@@ -27,9 +27,14 @@ namespace Movie_Catalog.User_Controls
         private void setMoviePoster(MySqlDataReader movie)
         {
             // ambil gambar lokal dan pasangkan ke picturebox
-            MoviePoster.Image = Image.FromFile(
-                    PosterStorage.GetFile(movie["poster_path"].ToString())
-                );
+            using (Bitmap bmpTemp = new Bitmap(
+                    PosterStorage.GetFile(
+                        movie["poster_path"].ToString()
+                    )
+                ))
+            {
+                MoviePoster.Image = new Bitmap(bmpTemp);
+            }
         }
 
         private void setMovieTitle(MySqlDataReader movie)

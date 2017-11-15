@@ -68,12 +68,10 @@ namespace Movie_Catalog
 
         private void setMoviePoster(Dictionary<string, string> Movie)
         {
-            Image img;
             using (var bmpTemp = new Bitmap(PosterStorage.GetFile(Movie["poster_path"].ToString())))
             {
-                img = new Bitmap(bmpTemp);
+                MoviePoster.Image = new Bitmap(bmpTemp);
             }
-            MoviePoster.Image = img;
         }
 
         private void setMovieTitle(Dictionary<string, string> Movie)

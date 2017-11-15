@@ -32,7 +32,6 @@
             this.MovieDescription = new System.Windows.Forms.Label();
             this.PlayMovieButton = new System.Windows.Forms.Button();
             this.DeleteMovieButton = new System.Windows.Forms.Button();
-            this.EditMovieButton = new System.Windows.Forms.Button();
             this.MoviePoster = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.MoviePoster)).BeginInit();
             this.SuspendLayout();
@@ -75,15 +74,6 @@
             this.DeleteMovieButton.UseVisualStyleBackColor = true;
             this.DeleteMovieButton.Click += new System.EventHandler(this.DeleteMovieButton_Click);
             // 
-            // EditMovieButton
-            // 
-            this.EditMovieButton.Location = new System.Drawing.Point(93, 460);
-            this.EditMovieButton.Name = "EditMovieButton";
-            this.EditMovieButton.Size = new System.Drawing.Size(75, 23);
-            this.EditMovieButton.TabIndex = 5;
-            this.EditMovieButton.Text = "Edit";
-            this.EditMovieButton.UseVisualStyleBackColor = true;
-            // 
             // MoviePoster
             // 
             this.MoviePoster.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
@@ -100,7 +90,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 495);
-            this.Controls.Add(this.EditMovieButton);
             this.Controls.Add(this.DeleteMovieButton);
             this.Controls.Add(this.PlayMovieButton);
             this.Controls.Add(this.MovieDescription);
@@ -122,6 +111,5 @@
         private System.Windows.Forms.Label MovieDescription;
         private System.Windows.Forms.Button PlayMovieButton;
         private System.Windows.Forms.Button DeleteMovieButton;
-        private System.Windows.Forms.Button EditMovieButton;
     }
 }

@@ -55,64 +55,70 @@ namespace Movie_Catalog
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            //ValidateInputs();
-
-            SaveButton.Text = "SAVING...";
-
-            MovieStorage movieStorage = new MovieStorage(MovieID.Text, this.MoviePath);
-            SubtitleStorage subtitleStorage = new SubtitleStorage(MovieID.Text, SubtitlePathLabel.Text);
-            PosterStorage posterStorage = new PosterStorage(MovieID.Text, MoviePoster);
-
-            DBConnector DBC = new DBConnector();
-
-            string query = "INSERT INTO movies (id, title, description, release_year, poster_path, movie_path, subtitle_path) VALUES (@id, @title, @description, @release_year, @poster_path, @movie_path, @subtitle_path)";
-
-            MySqlCommand command = new MySqlCommand(query, DBC.connection);
-            command.Parameters.Add("@id", MySqlDbType.Int64);
-            command.Parameters.Add("@title", MySqlDbType.String);
-            command.Parameters.Add("@description", MySqlDbType.String);
-            command.Parameters.Add("@release_year", MySqlDbType.Date);
-            command.Parameters.Add("@poster_path", MySqlDbType.String);
-            command.Parameters.Add("@movie_path", MySqlDbType.String);
-            command.Parameters.Add("@subtitle_path", MySqlDbType.String);
-
-            command.Parameters["@id"].Value = MovieID.Text;
-            command.Parameters["@title"].Value = MovieTitle.Text;
-            command.Parameters["@description"].Value = MovieDescription.Text;
-            command.Parameters["@release_year"].Value = MovieReleaseYear.Value.ToString("yyyy-MM-dd");
-            command.Parameters["@poster_path"].Value = posterStorage.GetName();
-            command.Parameters["@movie_path"].Value = movieStorage.GetName();
-            command.Parameters["@subtitle_path"].Value = subtitleStorage.GetName();
-
-
             try
             {
-                DBC.connection.Open();
-                
-                if(command.ExecuteNonQuery() != -1)
+                ValidateInputs();
+
+                SaveButton.Text = "SAVING...";
+
+                MovieStorage movieStorage = new MovieStorage(MovieID.Text, this.MoviePath);
+                SubtitleStorage subtitleStorage = new SubtitleStorage(MovieID.Text, SubtitlePathLabel.Text);
+                PosterStorage posterStorage = new PosterStorage(MovieID.Text, MoviePoster);
+
+                DBConnector DBC = new DBConnector();
+
+                string query = "INSERT INTO movies (id, title, description, release_year, poster_path, movie_path, subtitle_path) VALUES (@id, @title, @description, @release_year, @poster_path, @movie_path, @subtitle_path)";
+
+                MySqlCommand command = new MySqlCommand(query, DBC.connection);
+                command.Parameters.Add("@id", MySqlDbType.Int64);
+                command.Parameters.Add("@title", MySqlDbType.String);
+                command.Parameters.Add("@description", MySqlDbType.String);
+                command.Parameters.Add("@release_year", MySqlDbType.Date);
+                command.Parameters.Add("@poster_path", MySqlDbType.String);
+                command.Parameters.Add("@movie_path", MySqlDbType.String);
+                command.Parameters.Add("@subtitle_path", MySqlDbType.String);
+
+                command.Parameters["@id"].Value = MovieID.Text;
+                command.Parameters["@title"].Value = MovieTitle.Text;
+                command.Parameters["@description"].Value = MovieDescription.Text;
+                command.Parameters["@release_year"].Value = MovieReleaseYear.Value.ToString("yyyy-MM-dd");
+                command.Parameters["@poster_path"].Value = posterStorage.GetName();
+                command.Parameters["@movie_path"].Value = movieStorage.GetName();
+                command.Parameters["@subtitle_path"].Value = subtitleStorage.GetName();
+
+
+                try
                 {
-                    movieStorage.Run();
-                    posterStorage.Run();
-                    subtitleStorage.Run();
+                    DBC.connection.Open();
 
-                    SaveButton.Text = "SAVE";
+                    if (command.ExecuteNonQuery() != -1)
+                    {
+                        movieStorage.Run();
+                        posterStorage.Run();
+                        subtitleStorage.Run();
 
-                    MessageBox.Show("Berhasil disimpan.");
+                        SaveButton.Text = "SAVE";
 
-                    this.Close();
+                        MessageBox.Show("Berhasil disimpan.");
+
+                        this.Close();
+                    }
+                    else
+                    {
+                        SaveButton.Text = "SAVE";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    SaveButton.Text = "SAVE";
+                    MessageBox.Show(ex.Message);
                 }
-            }
-            catch (Exception ex)
+                finally
+                {
+                    DBC.connection.Close();
+                }
+            }catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                DBC.connection.Close();
             }
         }
 
@@ -137,7 +143,13 @@ namespace Movie_Catalog
 
         public void ValidateInputs()
         {
+            if (MovieID.Text == "") throw new Exception("ID film harus diisi");
             if (MovieTitle.Text == "") throw new Exception("Judul film harus diisi");
+            if (MoviePathLabel.Text == "") throw new Exception("film harus diisi");
+            if (MoviePoster.Image == null) throw new Exception("Gambar film harus diisi");
+            if (MovieReleaseYear.Value.ToString() == "") throw new Exception("Tanggal release film harus diisi");
+            if (MovieDescription.Text == "") throw new Exception("deskripsi film harus diisi"); 
+            if (SubtitlePathLabel.Text == "") throw new Exception("subtitle film harus diisi");
         }
 
         private bool checkInternetConnection()
@@ -187,6 +199,11 @@ namespace Movie_Catalog
                 if (ofd.ShowDialog() == DialogResult.OK)
                     this.SubtitlePathLabel.Text = ofd.FileName;
             }
+        }
+
+        private void MovieID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = !(char.IsDigit(e.KeyChar));
         }
     }
 }

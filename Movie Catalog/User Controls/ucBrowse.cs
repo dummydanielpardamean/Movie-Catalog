@@ -55,6 +55,7 @@ namespace Movie_Catalog.User_Controls
             }
             catch (Exception ex)
             {
+                MessageBox.Show("poop");
                 MessageBox.Show(ex.Message);
             }
             finally

@@ -218,6 +218,7 @@
             this.MovieID.Name = "MovieID";
             this.MovieID.Size = new System.Drawing.Size(61, 20);
             this.MovieID.TabIndex = 18;
+            this.MovieID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MovieID_KeyPress);
             // 
             // IDLabel
             // 

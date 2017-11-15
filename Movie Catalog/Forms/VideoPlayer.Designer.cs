@@ -66,7 +66,6 @@
             this.Controls.Add(this.VideoPanel);
             this.Name = "VideoPlayer";
             this.Text = "7";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VideoPlayer_FormClosing);
             this.VideoPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).EndInit();
             this.ResumeLayout(false);
