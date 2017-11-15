@@ -68,7 +68,12 @@ namespace Movie_Catalog
 
         private void setMoviePoster(Dictionary<string, string> Movie)
         {
-            MoviePoster.Image = Image.FromFile(PosterStorage.GetFile(Movie["poster_path"].ToString()));
+            Image img;
+            using (var bmpTemp = new Bitmap(PosterStorage.GetFile(Movie["poster_path"].ToString())))
+            {
+                img = new Bitmap(bmpTemp);
+            }
+            MoviePoster.Image = img;
         }
 
         private void setMovieTitle(Dictionary<string, string> Movie)
@@ -92,7 +97,7 @@ namespace Movie_Catalog
         {
             if (MessageBox.Show("Hapus film ini?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                string query = "SELECT m.id, m.title, m.description, m.release_year, m.poster_path, m.movie_path, m.subtitle_path, lw.current_position, lw.movie_duration, lw.last_watched_date FROM last_watched as lw, movies as m WHERE m.id=lw.movie_id and m.id=@movie_id";
+                string query = "Select * from movies where id=@movie_id";
 
                 MySqlCommand command = new MySqlCommand(query, DBC.connection);
                 command.Parameters.Add("@movie_id", MySqlDbType.Int64);
@@ -109,45 +114,48 @@ namespace Movie_Catalog
                         MovieStorage movieStorage = new MovieStorage(reader["movie_path"].ToString());
                         movieStorage.Delete();
 
+                        MoviePoster.Image.Dispose();
+
                         PosterStorage posterStorage = new PosterStorage(reader["poster_path"].ToString());
                         posterStorage.Delete();
 
                         SubtitleStorage subtitleStorage = new SubtitleStorage(reader["subtitle_path"].ToString());
                         subtitleStorage.Delete();
 
-                    }
-
-                    DBC.connection.Close();
-
-                    DBC.connection.Open();
-
-                    query = "DELETE FROM movies WHERE id= @movie_id";
-
-                    command = new MySqlCommand(query, DBC.connection);
-                    command.Parameters.Add("@movie_id", MySqlDbType.Int64);
-                    command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
-
-                    if (command.ExecuteNonQuery() != -1)
-                    {
                         DBC.connection.Close();
 
                         DBC.connection.Open();
 
-                        query = "DELETE FROM last_watched WHERE movie_id= @movie_id";
+                        query = "DELETE FROM movies WHERE id= @movie_id";
 
                         command = new MySqlCommand(query, DBC.connection);
                         command.Parameters.Add("@movie_id", MySqlDbType.Int64);
                         command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
 
                         if (command.ExecuteNonQuery() != -1)
-                            this.Close();
+                        {
+                            DBC.connection.Close();
+
+                            DBC.connection.Open();
+
+                            query = "DELETE FROM last_watched WHERE movie_id= @movie_id";
+
+                            command = new MySqlCommand(query, DBC.connection);
+                            command.Parameters.Add("@movie_id", MySqlDbType.Int64);
+                            command.Parameters["@movie_id"].Value = BrowseMovieItem.ClickedMovieID;
+
+                            if (command.ExecuteNonQuery() != -1)
+                                this.Close();
+                            else
+                                Console.WriteLine("Film tidak berhasil di hapus");
+                        }
                         else
+                        {
                             Console.WriteLine("Film tidak berhasil di hapus");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("Film tidak berhasil di hapus");
-                    }
+
+                    
                 }catch(Exception ex)
                 {
                     MessageBox.Show(ex.Message);

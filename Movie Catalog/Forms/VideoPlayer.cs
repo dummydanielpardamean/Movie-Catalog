@@ -31,11 +31,6 @@ namespace Movie_Catalog
             SetMovieToVideoPlayer();
         }
 
-        ~VideoPlayer()
-        {
-            axVLCPlugin21.Dispose();
-        }
-
         private void SetMovieToVideoPlayer()
         {
             if (Movie["movie_path"].ToString() != null)
@@ -208,6 +203,11 @@ namespace Movie_Catalog
             {
                 DBC.connection.Close();
             }
+        }
+
+        private void VideoPlayer_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            axVLCPlugin21.Dispose();
         }
     }
 }

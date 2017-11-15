@@ -23,9 +23,12 @@ namespace Movie_Catalog.User_Controls
 
         private void setMoviePoster(MySqlDataReader movie)
         {
-            MoviePoster.Image = Image.FromFile(
-                    PosterStorage.GetFile(movie["poster_path"].ToString())
-                );
+            Image img;
+            using (var bmpTemp = new Bitmap(PosterStorage.GetFile(movie["poster_path"].ToString())))
+            {
+                img = new Bitmap(bmpTemp);
+            }
+            MoviePoster.Image = img;
         }
 
         private void setMovieTitle(MySqlDataReader movie)
