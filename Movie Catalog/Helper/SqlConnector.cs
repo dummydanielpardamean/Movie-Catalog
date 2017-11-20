@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace Movie_Catalog
 {
-    class DBConnector
+    class SqlConnector
     {
         public MySqlConnection connection;
         private string server;
@@ -12,7 +12,7 @@ namespace Movie_Catalog
         private string password;
 
         //Constructor
-        public DBConnector()
+        public SqlConnector()
         {
             server = "localhost";
             database = ConfigurationManager.AppSettings["database"];

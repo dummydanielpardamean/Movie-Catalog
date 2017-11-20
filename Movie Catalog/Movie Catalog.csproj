@@ -103,11 +103,11 @@
     <Compile Include="User Controls\BrowseMovieItem.Designer.cs">
       <DependentUpon>BrowseMovieItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\LastWatchedItem.cs">
+    <Compile Include="User Controls\WatchingListItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="User Controls\LastWatchedItem.Designer.cs">
-      <DependentUpon>LastWatchedItem.cs</DependentUpon>
+    <Compile Include="User Controls\WatchingListItem.Designer.cs">
+      <DependentUpon>WatchingListItem.cs</DependentUpon>
     </Compile>
     <Compile Include="User Controls\ucBrowse.cs">
       <SubType>UserControl</SubType>
@@ -152,8 +152,8 @@
     <EmbeddedResource Include="User Controls\BrowseMovieItem.resx">
       <DependentUpon>BrowseMovieItem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User Controls\LastWatchedItem.resx">
-      <DependentUpon>LastWatchedItem.cs</DependentUpon>
+    <EmbeddedResource Include="User Controls\WatchingListItem.resx">
+      <DependentUpon>WatchingListItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="User Controls\ucBrowse.resx">
       <DependentUpon>ucBrowse.cs</DependentUpon>

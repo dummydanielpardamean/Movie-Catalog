@@ -65,7 +65,7 @@ namespace Movie_Catalog
                 SubtitleStorage subtitleStorage = new SubtitleStorage(MovieID.Text, SubtitlePathLabel.Text);
                 PosterStorage posterStorage = new PosterStorage(MovieID.Text, MoviePoster);
 
-                DBConnector DBC = new DBConnector();
+                SqlConnector DBC = new SqlConnector();
 
                 string query = "INSERT INTO movies (id, title, description, release_year, poster_path, movie_path, subtitle_path) VALUES (@id, @title, @description, @release_year, @poster_path, @movie_path, @subtitle_path)";
 
@@ -141,7 +141,7 @@ namespace Movie_Catalog
             }
         }
 
-        public void ValidateInputs()
+        private void ValidateInputs()
         {
             if (MovieID.Text == "") throw new Exception("ID film harus diisi");
             if (MovieTitle.Text == "") throw new Exception("Judul film harus diisi");

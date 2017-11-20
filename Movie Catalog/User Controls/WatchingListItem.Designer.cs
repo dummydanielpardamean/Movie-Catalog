@@ -1,6 +1,6 @@
 ﻿namespace Movie_Catalog.User_Controls
 {
-    partial class LastWatchedItem
+    partial class WatchingListItem
     {
         /// <summary> 
         /// Required designer variable.

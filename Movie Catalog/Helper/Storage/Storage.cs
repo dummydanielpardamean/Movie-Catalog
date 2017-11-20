@@ -9,7 +9,7 @@ namespace Movie_Catalog.Helper.Storage
     class Storage
     {
         // Thread untuk movie dan subtitle
-        protected void Run(String FilePath, String DestPath, bool delete=false)
+        protected void Run(String FilePath, String DestPath)
         {
             Thread thread = new Thread(
                     new ThreadStart( () =>

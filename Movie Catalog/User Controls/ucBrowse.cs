@@ -25,17 +25,11 @@ namespace Movie_Catalog.User_Controls
             InitializeComponent();
         }
 
-        private void ucBrowse_Load(object sender, EventArgs e)
-        {
-            _instance = null;
-            generate();
-        }
-
         public void generate()
         {
             this.FlowLayoutBrowse.Controls.Clear();
 
-            DBConnector DBC = new DBConnector();
+            SqlConnector DBC = new SqlConnector();
 
             try
             {
@@ -55,13 +49,18 @@ namespace Movie_Catalog.User_Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show("poop");
                 MessageBox.Show(ex.Message);
             }
             finally
             {
                 DBC.connection.Close();
             }
+        }
+
+        private void ucBrowse_Load(object sender, EventArgs e)
+        {
+            _instance = null;
+            generate();
         }
     }
 }

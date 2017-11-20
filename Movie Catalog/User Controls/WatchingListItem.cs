@@ -7,9 +7,9 @@ using System.Windows.Forms;
 
 namespace Movie_Catalog.User_Controls
 {
-    partial class LastWatchedItem : UserControl
+    partial class WatchingListItem : UserControl
     {
-        public LastWatchedItem(MySqlDataReader movie)
+        public WatchingListItem(MySqlDataReader movie)
         {
             InitializeComponent();
 
@@ -105,7 +105,7 @@ namespace Movie_Catalog.User_Controls
         {
             Button button = (Button)sender;
 
-            DBConnector DBC = new DBConnector();
+            SqlConnector DBC = new SqlConnector();
 
             string query = "SELECT m.id, m.title, m.description, m.release_year, m.poster_path, m.movie_path, lw.current_position, lw.movie_duration, lw.last_watched_date FROM last_watched as lw, movies as m WHERE m.id=lw.movie_id and m.id=@movie_id";
 

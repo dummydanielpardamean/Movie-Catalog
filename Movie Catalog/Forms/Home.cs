@@ -21,22 +21,22 @@ namespace Movie_Catalog
         private void Home_Load(object sender, EventArgs e)
         {
             // Set Watching list user control sebagai default user control.
-            ChangeToUserControlWatchingList();
+            ChangeToWatchingListUserControl();
         }
 
         private void WatchingListButton_Click(object sender, EventArgs e)
         {
             // Set Container ke user control watching list.
-            ChangeToUserControlWatchingList();
+            ChangeToWatchingListUserControl();
         }
 
         private void BrowseButton_Click(object sender, EventArgs e)
         {
             // Set Container ke user control browse.
-            ChangeToUserControlBrowse();
+            ChangeToBrowseUserControl();
         }
 
-        private void ChangeToUserControlWatchingList()
+        private void ChangeToWatchingListUserControl()
         {
             panelContainer.Controls.Clear();
 
@@ -52,7 +52,7 @@ namespace Movie_Catalog
             }
         }
 
-        private void ChangeToUserControlBrowse()
+        private void ChangeToBrowseUserControl()
         {
             panelContainer.Controls.Clear();
 

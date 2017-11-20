@@ -10,13 +10,13 @@ namespace Movie_Catalog
 {
     public partial class MovieDetail : Form
     {
-        private DBConnector DBC;
+        private SqlConnector DBC;
 
         private Dictionary<string, string> Movie;
 
         public MovieDetail()
         {
-            DBC = new DBConnector();
+            DBC = new SqlConnector();
 
             InitializeComponent();
 

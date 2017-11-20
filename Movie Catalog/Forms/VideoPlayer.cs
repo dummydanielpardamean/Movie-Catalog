@@ -8,7 +8,7 @@ namespace Movie_Catalog
 {
     partial class VideoPlayer : Form
     {
-        private DBConnector DBC;
+        private SqlConnector DBC;
 
         private string query;
 
@@ -24,7 +24,7 @@ namespace Movie_Catalog
         {
             InitializeComponent();
 
-            DBC = new DBConnector();
+            DBC = new SqlConnector();
 
             Movie = movie;
 
@@ -77,7 +77,7 @@ namespace Movie_Catalog
             // jika film sudah diputar sampai habis
             // akan dilakukan penghapusan record history tontonan
             string query = "DELETE FROM last_watched WHERE movie_id = @movie_id;";
-            DBConnector DBC = new DBConnector();
+            SqlConnector DBC = new SqlConnector();
 
             MySqlCommand command = new MySqlCommand(query, DBC.connection);
             command.Parameters.Add("@movie_id", MySqlDbType.Int64);

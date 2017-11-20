@@ -26,11 +26,11 @@ namespace Movie_Catalog.User_Controls
             generate();
         }
 
-        public void generate()
+        private void generate()
         {
             this.FlowLayout.Controls.Clear();
 
-            DBConnector DBC = new DBConnector();
+            SqlConnector DBC = new SqlConnector();
 
             try
             {
@@ -44,7 +44,7 @@ namespace Movie_Catalog.User_Controls
                 while (reader.Read())
                 {
                     this.FlowLayout.Controls.Add(
-                            new LastWatchedItem(reader)
+                            new WatchingListItem(reader)
                         );
                 }
             }
