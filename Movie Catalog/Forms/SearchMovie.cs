@@ -42,14 +42,16 @@ namespace Movie_Catalog
             {
                 string URL = String.Format("https://api.themoviedb.org/3/search/movie?api_key=25a50153584853f213f4dbe652c52187&query={0}", this.SearchFieldTextBox.Text);
 
-                Search JSONObject = new JavaScriptSerializer().Deserialize<Search>(
+                try
+                {
+                    Search JSONObject = new JavaScriptSerializer().Deserialize<Search>(
                         webClient.DownloadString(URL)
                     );
 
+                    Invoke((MethodInvoker)(() =>
+                    {
 
-                Invoke((MethodInvoker)(() => {
-
-                    string[] columnNames = new string[] {
+                        string[] columnNames = new string[] {
                         "ID",
                         "Title",
                         "Description",
@@ -57,18 +59,18 @@ namespace Movie_Catalog
                         "Release Date"
                     };
 
-                    MovieDGV.ColumnCount = columnNames.Length;
+                        MovieDGV.ColumnCount = columnNames.Length;
 
-                    for(int i = 0; i<columnNames.Length; i++)
-                    {
-                        MovieDGV.Columns[i].Name = columnNames[i];
-                    }
+                        for (int i = 0; i < columnNames.Length; i++)
+                        {
+                            MovieDGV.Columns[i].Name = columnNames[i];
+                        }
 
-                    MovieDGV.Rows.Clear();
+                        MovieDGV.Rows.Clear();
 
-                    foreach (SearchResult result in JSONObject.results)
-                    {
-                        string[] row = new string[] {
+                        foreach (SearchResult result in JSONObject.results)
+                        {
+                            string[] row = new string[] {
                             Convert.ToString(result.id),
                             result.title,
                             result.overview,
@@ -76,32 +78,40 @@ namespace Movie_Catalog
                             result.release_date
                         };
 
-                        DataGridViewButtonColumn PilihButton = new DataGridViewButtonColumn()
+                            DataGridViewButtonColumn PilihButton = new DataGridViewButtonColumn()
+                            {
+                                Name = "Action",
+                                UseColumnTextForButtonValue = true,
+                                Text = "Pilih"
+                            };
+
+                            if (MovieDGV.Columns["Action"] == null)
+                                MovieDGV.Columns.Insert(5, PilihButton);
+
+                            MovieDGV.Rows.Add(row);
+                        }
+
+                        FetchingStatus.Text = "Done";
+
+                        Thread RemoveFetchingSatus = new Thread(new ThreadStart(() =>
                         {
-                            Name = "Action",
-                            UseColumnTextForButtonValue = true,
-                            Text = "Pilih"
-                        };
-
-                        if (MovieDGV.Columns["Action"] == null)
-                            MovieDGV.Columns.Insert(5, PilihButton);
-
-                        MovieDGV.Rows.Add(row);
-                    }
-
-                    FetchingStatus.Text = "Done";
-
-                    Thread RemoveFetchingSatus = new Thread(new ThreadStart(() =>
-                    {
-                        Thread.Sleep(1000);
-                        Invoke((MethodInvoker)(() => {
-                            FetchingStatus.Text = "";
+                            Thread.Sleep(1000);
+                            Invoke((MethodInvoker)(() =>
+                            {
+                                FetchingStatus.Text = "";
+                            }));
                         }));
+
+                        RemoveFetchingSatus.Start();
+
                     }));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
 
-                    RemoveFetchingSatus.Start();
 
-                }));
             }
         }
 
